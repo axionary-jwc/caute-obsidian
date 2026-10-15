@@ -1,0 +1,27 @@
+{
+  "name": "caute-obsidian",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Caute for Obsidian: card links as chips, cards and quotes from your Caute library, and publishing a note to it.",
+  "license": "MIT",
+  "author": "Axionary Labs",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs production",
+    "dev": "node esbuild.config.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.13",
+    "@types/node": "^26.6.2",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-obsidianmd": "^0.4.2",
+    "obsidian": "1.14.4",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.1"
+  }
+}

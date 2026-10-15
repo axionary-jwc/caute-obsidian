@@ -1,0 +1,56 @@
+/* A card link as a chip: the card's tint, its title, and what kind of thing it is. */
+.caute-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  max-width: 100%;
+  padding: 0.05em 0.5em;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  text-decoration: none;
+  font-size: 0.92em;
+  vertical-align: baseline;
+}
+.caute-chip:hover {
+  background: var(--background-modifier-hover);
+  text-decoration: none;
+}
+.caute-chip.external-link {
+  background-image: none;
+  padding-right: 0.5em;
+}
+.caute-chip-dot {
+  flex: none;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: hsl(var(--caute-hue, 214) 45% 55%);
+  align-self: center;
+}
+.caute-chip-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.caute-chip-meta {
+  flex: none;
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+.caute-chip-unavailable {
+  color: var(--text-faint);
+  border-style: dashed;
+  background: transparent;
+}
+.caute-suggestion-title {
+  font-weight: var(--font-semibold);
+}
+.caute-suggestion-line {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
