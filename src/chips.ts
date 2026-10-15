@@ -146,11 +146,19 @@ class ChipWidget extends WidgetType {
       cls: "external-link", href: this.url, attr: { target: "_blank", rel: "noopener" },
     });
     fillChip(a, this.preview);
+    // A click opens the card, as a click on any of Obsidian's own links does.
+    // The editor never sees it, so it doesn't move the cursor into the link;
+    // arrow keys still reach the Markdown underneath.
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // or Obsidian's own handler for external links opens it a second time
+      window.open(this.url);
+    });
     return a;
   }
 
-  ignoreEvent(): boolean {
-    return false;
+  ignoreEvent(e: Event): boolean {
+    return e.type === "mousedown" || e.type === "click";
   }
 }
 

@@ -41,7 +41,7 @@ export default class CautePlugin extends Plugin {
 
     this.auth = new CauteAuth(this.app, () => this.settings.apiUrl, () => this.oauth,
       async (s) => { this.oauth = s; await this.persist(); },
-      () => { this.cache?.clear(); this.tab?.display(); });
+      () => { this.cache?.clear(); this.tab?.refresh(); });
     this.api = new Caute(() => this.settings.apiUrl, this.auth);
     this.cache = new PreviewCache(() => (this.auth.connected() ? this.api : null));
 

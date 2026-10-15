@@ -1,0 +1,39 @@
+# Releases for the public repository (copied there by scripts/mirror.sh; it does
+# nothing in Caute's own repository, where this folder is not the root).
+#
+# Pushing a tag that is the manifest's version builds the plugin, has GitHub
+# attest where main.js, manifest.json and styles.css came from, and publishes
+# them as the release Obsidian installs from.
+name: Release
+
+on:
+  push:
+    tags: ["[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: The tag is the manifest's version
+        run: test "$(node -p "require('./manifest.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm ci && npm run typecheck && npm run lint && npm test && npm run build
+      - uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" main.js manifest.json styles.css --title "$GITHUB_REF_NAME" --generate-notes
