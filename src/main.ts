@@ -394,16 +394,14 @@ export default class CautePlugin extends Plugin {
 
   /** `obsidian://caute-note?id=…`, from a card's Links tab in Caute: open that note. */
   private async openPointer(id: string | undefined): Promise<void> {
+    // Only the notes this plugin registered, where it last saw them (renames
+    // are followed), rather than searching the whole vault: the plugin never
+    // needs to list every file to do this.
     const wanted = (id ?? "").trim().toLowerCase();
     const known = this.registry[wanted]?.path;
-    const candidates = [
-      ...(known ? [this.app.vault.getAbstractFileByPath(known)] : []),
-      ...this.app.vault.getMarkdownFiles(),
-    ];
-    const file = candidates.find((f): f is TFile => f instanceof TFile
-      && publishId(this.app.metadataCache.getFileCache(f)?.frontmatter) === wanted);
-    if (!file) {
-      new Notice("That note isn't in this vault.");
+    const file = known ? this.app.vault.getAbstractFileByPath(known) : null;
+    if (!(file instanceof TFile) || publishId(this.app.metadataCache.getFileCache(file)?.frontmatter) !== wanted) {
+      new Notice("That note isn't in this vault, or it was quoted from another device.");
       return;
     }
     await this.app.workspace.getLeaf(false).openFile(file);
