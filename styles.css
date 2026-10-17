@@ -54,3 +54,123 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* The Caute pane (ADR 0132): sources for a paragraph, search and highlights. */
+.caute-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+  padding: var(--size-4-2);
+}
+.caute-pane-tabs {
+  display: flex;
+  gap: var(--size-4-1);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+.caute-pane-tab {
+  background: none;
+  box-shadow: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: var(--size-4-1) var(--size-4-2);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.caute-pane-tab.is-active {
+  color: var(--text-normal);
+  border-bottom-color: var(--interactive-accent);
+}
+.caute-pane-tools {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1);
+}
+.caute-pane-tools input {
+  width: 100%;
+}
+.caute-pane-note,
+.caute-pane-message {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+.caute-pane-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+.caute-pane-list.is-busy .caute-passage {
+  opacity: 0.6;
+}
+.caute-passage {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  padding: var(--size-4-2);
+  background: var(--background-primary);
+  cursor: grab;
+}
+.caute-passage:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 1px;
+}
+.caute-passage-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1);
+  font-size: var(--font-ui-small);
+}
+.caute-passage-title {
+  font-weight: var(--font-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.caute-passage-meta {
+  flex: none;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+.caute-passage-highlighted {
+  flex: none;
+  display: inline-flex;
+  color: var(--text-accent);
+  --icon-size: var(--icon-xs);
+}
+.caute-passage-text {
+  margin: var(--size-4-1) 0;
+  font-family: var(--font-text);
+  font-size: var(--font-ui-small);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  user-select: text;
+  cursor: text;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.caute-passage.is-open .caute-passage-text {
+  display: block;
+}
+.caute-passage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-4-1);
+}
+.caute-passage-actions button {
+  font-size: var(--font-ui-smaller);
+  padding: 0 var(--size-4-2);
+  height: auto;
+  min-height: 24px;
+}
+.caute-passage-open {
+  font-size: var(--font-ui-smaller);
+  margin-left: auto;
+}
+.caute-question {
+  width: 100%;
+  resize: vertical;
+  font-size: var(--font-ui-medium);
+}

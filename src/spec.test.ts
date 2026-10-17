@@ -19,6 +19,7 @@ describe.skipIf(!spec)("the API the plugin reads", () => {
     for (const path of ["/v1/items/preview:batch", "/v1/search", "/v1/related", "/v1/items"]) {
       expect(spec.paths[path]?.post, path).toBeTruthy();
     }
+    expect(spec.paths["/v1/highlights"]?.get).toBeTruthy();
   });
 
   it("has every field the plugin reads", () => {
@@ -28,7 +29,13 @@ describe.skipIf(!spec)("the API the plugin reads", () => {
     expect(props("SearchResult")).toEqual(expect.arrayContaining(["item", "space", "match"]));
     expect(props("ResultItem")).toEqual(expect.arrayContaining(["id", "title", "kind", "captured_at"]));
     expect(props("Match")).toEqual(expect.arrayContaining(["snippet", "anchor"]));
-    expect(props("RelatedItem")).toEqual(expect.arrayContaining(["item", "snippet", "score"]));
+    expect(props("RelatedItem")).toEqual(expect.arrayContaining(["item", "snippet", "score", "passage"]));
+    expect(props("RelatedPassage")).toEqual(expect.arrayContaining(["chunk_id", "text", "anchor", "highlighted"]));
+    expect(props("Highlight")).toEqual(expect.arrayContaining(
+      ["id", "item_id", "title", "kind", "anchor", "excerpt", "captured_at"]));
+    expect(props("SearchResponse")).toEqual(expect.arrayContaining(["answer", "results"]));
+    expect(props("Answer")).toEqual(expect.arrayContaining(["text", "citations", "left_out"]));
+    expect(props("AnswerCitation")).toEqual(expect.arrayContaining(["result_index", "anchor"]));
     expect(props("ItemCaptured")).toEqual(expect.arrayContaining(["id", "status", "duplicate", "supersedes"]));
   });
 
@@ -37,6 +44,6 @@ describe.skipIf(!spec)("the API the plugin reads", () => {
     expect(Object.keys(capture.properties)).toEqual(expect.arrayContaining(
       ["text", "title", "source", "context", "external_id", "replace_earlier"]));
     expect(props("SearchRequest")).toEqual(expect.arrayContaining(["query", "mode", "limit"]));
-    expect(props("RelatedQuery")).toEqual(expect.arrayContaining(["text", "limit"]));
+    expect(props("RelatedQuery")).toEqual(expect.arrayContaining(["text", "limit", "per_item"]));
   });
 });

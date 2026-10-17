@@ -7,7 +7,7 @@ import {
   App, Editor, EditorSuggest, Modal, Setting, SuggestModal, type EditorPosition, type EditorSuggestContext,
   type EditorSuggestTriggerInfo, type TFile,
 } from "obsidian";
-import type { Caute, CauteError, RelatedItem, SearchResult } from "./api";
+import type { Caute, CauteError, SearchResult } from "./api";
 
 const DEBOUNCE_MS = 250;
 
@@ -52,29 +52,6 @@ export class CardSearchModal extends SuggestModal<SearchResult> {
   }
 
   onChooseSuggestion(r: SearchResult): void {
-    this.chose(r);
-  }
-}
-
-/** Cards close in meaning to a paragraph, filtered as the person types. */
-export class RelatedModal extends SuggestModal<RelatedItem> {
-  constructor(app: App, private items: RelatedItem[], private chose: (r: RelatedItem) => void) {
-    super(app);
-    this.setPlaceholder("Cards in Caute related to this paragraph");
-    this.emptyStateText = "Nothing you've caught is close to this paragraph.";
-  }
-
-  getSuggestions(query: string): RelatedItem[] {
-    const q = query.trim().toLowerCase();
-    return q ? this.items.filter((r) => `${r.item.title ?? ""} ${r.snippet}`.toLowerCase().includes(q))
-      : this.items;
-  }
-
-  renderSuggestion(r: RelatedItem, el: HTMLElement): void {
-    renderCard(el, r.item.title, r.snippet);
-  }
-
-  onChooseSuggestion(r: RelatedItem): void {
     this.chose(r);
   }
 }
@@ -141,5 +118,38 @@ export function ask<T>(app: App, title: string, lines: string[], choices: { labe
       if (!answered) resolve(null);
     };
     modal.open();
+  });
+}
+
+/** A box for a question; resolves with what was typed, or null if closed. */
+export function askQuestion(app: App): Promise<string | null> {
+  return new Promise((resolve) => {
+    let asked = false;
+    const modal = new Modal(app);
+    modal.setTitle("Ask Caute");
+    modal.contentEl.createEl("p", { cls: "caute-pane-note",
+      text: "Answered from what you've caught, with every claim linked to its card. The answer is saved as a note in this vault." });
+    const input = modal.contentEl.createEl("textarea", {
+      cls: "caute-question", attr: { rows: "3", placeholder: "Your question", "aria-label": "Your question" },
+    });
+    const go = () => {
+      const q = input.value.trim();
+      if (q.length < 3) return;
+      asked = true;
+      resolve(q);
+      modal.close();
+    };
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        go();
+      }
+    });
+    new Setting(modal.contentEl).addButton((b) => b.setButtonText("Ask").setCta().onClick(go));
+    modal.onClose = () => {
+      if (!asked) resolve(null);
+    };
+    modal.open();
+    window.setTimeout(() => input.focus(), 0);
   });
 }

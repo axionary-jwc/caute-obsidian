@@ -6,6 +6,8 @@
  * (`http://app.caute.localhost:8000`) is recognised the same way.
  */
 
+import { defang } from "./defang";
+
 export interface CardLink {
   id: string;
   /** The whole URL as written, anchor included. */
@@ -76,7 +78,7 @@ export function cardUrl(appUrl: string, id: string, fragment = ""): string {
  */
 export function linkLabel(title: string | null | undefined): string {
   const clean = (title ?? "").replace(/[[\]\r\n]+/g, " ").replace(/\s+/g, " ").trim();
-  return clean || "Untitled card";
+  return clean ? defang(clean) : "Untitled card";
 }
 
 export function markdownLink(title: string | null | undefined, url: string): string {

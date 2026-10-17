@@ -12,11 +12,14 @@ import { READ_SCOPES } from "./oauth";
 export interface CauteSettings {
   apiUrl: string;
   appUrl: string;
+  /** Where Ask Caute writes its answers (ADR 0132, K4). */
+  answersFolder: string;
 }
 
 export const DEFAULT_SETTINGS: CauteSettings = {
   apiUrl: "https://api.getcaute.com",
   appUrl: "https://app.getcaute.com",
+  answersFolder: "Caute answers",
 };
 
 /** One row: its words, when it shows, and how to fill in its controls. */
@@ -92,12 +95,42 @@ export class CauteSettingTab extends PluginSettingTab {
         ],
       },
       {
+        heading: "Quoted in Caute",
+        rows: [{
+          name: "Show in Caute where you quote each card",
+          desc: "Each card you quote or link from a note lists that note on its Links tab in Caute. Caute keeps only"
+            + " an id for each note, never its name or text.",
+          render: (s) => {
+            s.addToggle((t) => {
+              t.setValue(this.plugin.quotedIn === true).onChange((v) => { void this.plugin.setQuotedIn(v); });
+            });
+          },
+        }],
+      },
+      {
+        heading: "Ask Caute",
+        rows: [{
+          name: "Folder for answers",
+          desc: "Each answer is saved as a note here. Caute doesn't keep questions asked from Obsidian.",
+          render: (s) => {
+            s.addText((t) => {
+              t.setPlaceholder(DEFAULT_SETTINGS.answersFolder).setValue(this.plugin.settings.answersFolder)
+                .onChange((v) => {
+                  this.plugin.settings.answersFolder =
+                    v.trim().replace(/^\/+|\/+$/g, "") || DEFAULT_SETTINGS.answersFolder;
+                  void this.plugin.saveSettings();
+                });
+            });
+          },
+        }],
+      },
+      {
         heading: "What leaves this vault",
         rows: [{
           name: "Only what you ask for",
-          desc: "A note when you publish it, the paragraph you're in when you ask for related cards, and what you"
-            + " type into a search. Card links are looked up by their id. Nothing else in this vault is sent to"
-            + " Caute.",
+          desc: "A note when you publish it, the paragraph you're in when you ask for sources, a question you ask,"
+            + " what you type into a search, and, if you turn it on, an id for each note that quotes a card. Card"
+            + " links are looked up by their id. Nothing else in this vault is sent to Caute.",
         }],
       },
       {
@@ -113,7 +146,7 @@ export class CauteSettingTab extends PluginSettingTab {
     ];
   }
 
-  private address(s: Setting, key: keyof CauteSettings): void {
+  private address(s: Setting, key: "apiUrl" | "appUrl"): void {
     s.addText((t) => t.setValue(this.plugin.settings[key]).onChange((v) => {
       this.plugin.settings[key] = v.trim() || DEFAULT_SETTINGS[key];
       void this.plugin.saveSettings();
